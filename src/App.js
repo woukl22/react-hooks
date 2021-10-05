@@ -2,13 +2,28 @@ import React, { useEffect, useState, useRef } from "react";
 import ReactDOM from "react-dom";
 import "./styles.css";
 
+const useClick = (onClick) => {
+  const element = useRef();
+  useEffect(() => {
+    if (element.current) {
+      element.current.addEventListener("click", onClick);
+    }
+
+    return () => {
+      if (element.current) {
+        element.current.removeEventListener("click", onClick);
+      }
+    };
+  }, []);
+  return element;
+};
+
 const App = () => {
-  const input = useRef();
-  setTimeout(() => input.current.focus(), 5000);
+  const sayHello = () => console.log("say hello");
+  const title = useClick(sayHello);
   return (
     <div className="App">
-      <div>Hi</div>
-      <input ref={input} placeholder="focus after 5 seconds!" />
+      <div ref={title}>Hi</div>
     </div>
   );
 };
