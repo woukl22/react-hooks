@@ -1,24 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ReactDOM from "react-dom";
-
 import "./styles.css";
 
-const useTitle = (initialTitle) => {
-  const [title, setTitle] = useState(initialTitle);
-  const updateTitle = () => {
-    const htmlTitle = document.querySelector("title");
-    htmlTitle.innerText = title;
-  };
-  useEffect(updateTitle, [title]);
-  return setTitle;
-};
-
 const App = () => {
-  const titleUpdater = useTitle("Loading...");
-  setTimeout(() => titleUpdater("Home"), 5000);
+  const input = useRef();
+  setTimeout(() => input.current.focus(), 5000);
   return (
     <div className="App">
       <div>Hi</div>
+      <input ref={input} placeholder="focus after 5 seconds!" />
     </div>
   );
 };
