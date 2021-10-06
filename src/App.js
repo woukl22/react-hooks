@@ -2,54 +2,33 @@ import React, { useEffect, useState, useRef } from "react";
 import ReactDOM from "react-dom";
 import "./styles.css";
 
-const useFullscreen = (callback) => {
-  const element = useRef();
-  const runCb = (isFull) => {
-    if (callback && typeof callback === "function") {
-      callback(isFull);
+const useNotification = (title, options) => {
+  if (!("Notification" in window)) {
+    return;
+  }
+  const fireNotif = () => {
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          new Notification(title, options);
+        } else {
+          return;
+        }
+      });
+    } else {
+      new Notification(title, options);
     }
   };
-  const triggerFull = () => {
-    if (element.current) {
-      if (element.current.requestFullscreen) {
-        element.current.requestFullscreen();
-      } else if (element.current.mozRequestFullScreen) {
-        element.current.mozRequestFullScreen();
-      } else if (element.current.webkitRequestFullScreen) {
-        element.current.webkitRequestFullScreen();
-      } else if (element.current.msRequestFullScreen) {
-        element.current.msRequestFullScreen();
-      }
-      runCb(true);
-    }
-  };
-  const exitFull = () => {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.mozCancelFullscreen) {
-      document.mozCancelFullscreen();
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) {
-      document.msExitFullscreen();
-    }
-    runCb(false);
-  };
-  return { element, triggerFull, exitFull };
+  return fireNotif;
 };
 
 const App = () => {
-  const onFullS = (isFull) => {
-    console.log(isFull ? "We are full" : "We are small");
-  };
-  const { element, triggerFull, exitFull } = useFullscreen(onFullS);
+  const triggerNotif = useNotification("Can I steal your kimchi?", {
+    body: "I love kimchi don't you"
+  });
   return (
     <div className="App" style={{ height: "1000vh" }}>
-      <div ref={element}>
-        <img src="https://avatars.githubusercontent.com/u/69896250?v=4" />
-        <button onClick={exitFull}>Exit fullscreen</button>
-      </div>
-      <button onClick={triggerFull}>Make fullscreen</button>
+      <button onClick={triggerNotif}>Hello</button>
     </div>
   );
 };
